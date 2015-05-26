@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func print_steps(steps [16]bool) string {
+func printSteps(steps [16]bool) string {
 	var buffer bytes.Buffer
 
 	buffer.WriteString("|")
@@ -22,14 +22,14 @@ func print_steps(steps [16]bool) string {
 	return buffer.String()
 }
 
-func print_version(version string) string {
+func printVersion(version string) string {
 	return fmt.Sprintf("Saved with HW Version: %s\n", version)
 }
 
-func print_tempo(tempo float32) string {
+func printTempo(tempo float32) string {
 	return fmt.Sprintf("Tempo: %g\n", tempo)
 }
 
-func print_track(track Track) string {
-	return fmt.Sprintf("(%d) %s\t%s\n", track.id, track.name, print_steps(track.steps))
+func printTrack(trackObj track) string {
+	return fmt.Sprintf("(%d) %s\t%s\n", trackObj.id, trackObj.name, printSteps(trackObj.steps))
 }

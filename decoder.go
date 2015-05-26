@@ -11,11 +11,11 @@ import (
 // rest of the data.
 // TODO: implement
 func DecodeFile(path string) (*Pattern, error) {
-	ptn := parse_pattern(path)
+	ptn := parsePattern(path)
 	return &ptn, nil
 }
 
-func parse_pattern(filePath string) Pattern {
+func parsePattern(filePath string) Pattern {
 	var ptn Pattern
 
 	// Step 1: read in the file
@@ -27,33 +27,33 @@ func parse_pattern(filePath string) Pattern {
 	r := bufio.NewReader(f)
 
 	// Step 3: Parse pattern name from header
-	parse_header(r)
-	total_len := parse_length(r)
-	tracks_len := total_len - PATTERN_VERSION_LENGTH - 4
+	parseHeader(r)
+	totalLen := parseLength(r)
+	tracksLen := totalLen - patternVersionLength - 4
 
-	ptn.version = parse_version(r)
-	ptn.tempo = parse_tempo(r)
-	ptn.tracks = parse_tracks(r, tracks_len)
+	ptn.version = parseVersion(r)
+	ptn.tempo = parseTempo(r)
+	ptn.tracks = parseTracks(r, tracksLen)
 
 	return ptn
 }
 
-func Print_pattern(pattern Pattern) string {
+func printPattern(pattern Pattern) string {
 	var buffer bytes.Buffer
 
-	buffer.WriteString(print_version(pattern.version))
-	buffer.WriteString(print_tempo(pattern.tempo))
+	buffer.WriteString(printVersion(pattern.version))
+	buffer.WriteString(printTempo(pattern.tempo))
 
 	for _, track := range pattern.tracks {
-		buffer.WriteString(print_track(track))
+		buffer.WriteString(printTrack(track))
 	}
 
 	return buffer.String()
 }
 
 // method for type Pattern
-func (this Pattern) String() string {
-	return Print_pattern(this)
+func (ptn Pattern) String() string {
+	return printPattern(ptn)
 }
 
 // Pattern is the high level representation of the
@@ -62,5 +62,5 @@ func (this Pattern) String() string {
 type Pattern struct {
 	version string
 	tempo   float32
-	tracks  []Track
+	tracks  []track
 }

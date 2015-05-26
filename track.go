@@ -5,18 +5,18 @@ import (
 	"encoding/binary"
 )
 
-const TEMPO_SIZE = 4    // in byte
-const ID_SIZE = 4       // in byte
-const NAME_LEN_SIZE = 1 // in byte
-const STEPS_SIZE = 16   // in byte
+const tempoSize = 4   // in byte
+const idSize = 4      // in byte
+const nameLenSize = 1 // in byte
+const stepsSize = 16  // in byte
 
-type Track struct {
+type track struct {
 	id    int32
 	name  string
 	steps [16]bool
 }
 
-func parse_tempo(r *bufio.Reader) float32 {
+func parseTempo(r *bufio.Reader) float32 {
 	var tempo float32
 
 	err := binary.Read(r, binary.LittleEndian, &tempo)
@@ -25,7 +25,7 @@ func parse_tempo(r *bufio.Reader) float32 {
 	return tempo
 }
 
-func parse_id(r *bufio.Reader) int32 {
+func parseID(r *bufio.Reader) int32 {
 	var id int32
 	err := binary.Read(r, binary.LittleEndian, &id)
 	check(err)
@@ -33,17 +33,17 @@ func parse_id(r *bufio.Reader) int32 {
 	return id
 }
 
-func parse_name_len(r *bufio.Reader) int32 {
-	var len_b byte
-	err := binary.Read(r, binary.BigEndian, &len_b)
+func parseNameLen(r *bufio.Reader) int32 {
+	var lenInByte byte
+	err := binary.Read(r, binary.BigEndian, &lenInByte)
 	check(err)
 
-	return int32(len_b)
+	return int32(lenInByte)
 }
 
-func parse_name(r *bufio.Reader, len int32) string {
+func parseName(r *bufio.Reader, len int32) string {
 	var name string
-	buffer, err := parse_segment(r, len)
+	buffer, err := parseSegment(r, len)
 	check(err)
 
 	name = string(buffer)
@@ -51,7 +51,7 @@ func parse_name(r *bufio.Reader, len int32) string {
 	return name
 }
 
-func parse_steps(r *bufio.Reader) [16]bool {
+func parseSteps(r *bufio.Reader) [16]bool {
 	var steps [16]bool
 	var step byte
 
@@ -68,14 +68,14 @@ func parse_steps(r *bufio.Reader) [16]bool {
 	return steps
 }
 
-func parse_track(r *bufio.Reader) (track Track, track_len int32) {
+func parseTrack(r *bufio.Reader) (trackObj track, trackLen int32) {
 
-	track.id = parse_id(r)
-	name_len := parse_name_len(r)
-	track.name = parse_name(r, name_len)
-	track.steps = parse_steps(r)
+	trackObj.id = parseID(r)
+	nameLen := parseNameLen(r)
+	trackObj.name = parseName(r, nameLen)
+	trackObj.steps = parseSteps(r)
 
-	track_len = ID_SIZE + NAME_LEN_SIZE + name_len + STEPS_SIZE
+	trackLen = idSize + nameLenSize + nameLen + stepsSize
 
-	return track, track_len
+	return trackObj, trackLen
 }
